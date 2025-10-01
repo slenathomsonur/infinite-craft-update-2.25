@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Craft - Logical Combinations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --text-primary: #e6e6e6;
+            --text-secondary: #b3b3b3;
+            --text-muted: #8c8c8c;
+            --accent: #4cc9f0;
+            --accent-dark: #3aa8d0;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #f44336;
+            --mythical: #9C27B0;
+            --inflation: #FFD700;
+            --border: #2a3a5a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 12px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 1024px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .crafting-area, .workspace {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .category-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .category-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-btn.active {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+        }
+
+        .category-btn:hover:not(.active) {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .elements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .element {
+            background: var(--bg-primary);
+            border-radius: 10px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: grab;
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+            position: relative;
+            user-select: none;
+        }
+
+        .element:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(76, 201, 240, 0.2);
+            border-color: var(--accent);
+        }
+
+        .element-emoji {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .element-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .drop-zones {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .drop-zone {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            background: var(--bg-primary);
+        }
+
+        .drop-zone.highlight {
+            border-color: var(--accent);
+            background: rgba(76, 201, 240, 0.1);
+        }
+
+        .drop-zone.filled {
+            border-style: solid;
+            border-color: var(--success);
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .combine-btn {
+            width: 100%;
+            background: linear-gradient(145deg, var(--accent), var(--accent-dark));
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .combine-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(76, 201, 240, 0.4);
+        }
+
+        .combine-btn:disabled {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .result-area {
+            background: var(--bg-primary);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .result-emoji {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .result-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .result-hint {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .discoveries {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .discoveries-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .discovery-item {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .discovery-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(76, 201, 240, 0.2);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .action-btn {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent);
+        }
+
+        footer {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 12px;
+            padding: 15px 25px;
+            border: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Infinite generation indicator */
+        .infinite-indicator {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        
+        .infinite-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+        
+        .infinite-subtext {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        /* Element discovery animation */
+        @keyframes elementDiscovery {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .discovering {
+            animation: elementDiscovery 0.6s ease-out;
+        }
+        
+        /* Progress bar for generation */
+        .generation-progress {
+            height: 6px;
+            background: var(--bg-primary);
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .generation-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        /* Element rarity indicators */
+        .element.common { border-left: 4px solid var(--success); }
+        .element.uncommon { border-left: 4px solid var(--accent); }
+        .element.rare { border-left: 4px solid var(--warning); }
+        .element.epic { border-left: 4px solid var(--mythical); }
+        .element.legendary { border-left: 4px solid var(--inflation); }
+        
+        .rarity-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .common-badge { background: var(--success); color: white; }
+        .uncommon-badge { background: var(--accent); color: white; }
+        .rare-badge { background: var(--warning); color: black; }
+        .epic-badge { background: var(--mythical); color: white; }
+        .legendary-badge { background: var(--inflation); color: black; }
+        
+        /* Discovery effects */
+        .discovery-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, rgba(76, 201, 240, 0.3) 0%, transparent 70%);
+            border-radius: 10px;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Load more elements button */
+        .load-more-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .load-more-btn {
+            background: linear-gradient(145deg, var(--accent), var(--accent-dark));
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .load-more-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(76, 201, 240, 0.4);
+        }
+        
+        /* Element tooltip */
+        .element-tooltip {
+            position: absolute;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            z-index: 1000;
+            max-width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .element-tooltip.show {
+            opacity: 1;
+        }
+        
+        .tooltip-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+        
+        .tooltip-category {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+        
+        .tooltip-rarity {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Generation settings */
+        .generation-settings {
+            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .gen-setting-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .gen-setting-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .gen-setting-control {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 5px 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            width: 100px;
+        }
+        
+        /* Multi-toggle for 2/3 element combination */
+        .multi-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .toggle-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--text-secondary);
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--accent);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+            background-color: var(--bg-primary);
+        }
+        
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast-message {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        
+        /* Zone 3 visibility */
+        .zone-3 {
+            display: none;
+        }
+        
+        .multi-combine .zone-3 {
+            display: flex;
+        }
+        
+        /* Hint system */
+        .hint-system {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            border: 1px solid var(--border);
+        }
+        
+        .hint-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--accent);
+        }
+        
+        .hint-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-infinity"></i>
+                    Infinite<span>Craft</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#" id="settingsBtn"><i class="fas fa-cog"></i> Settings</a>
+                    <a href="#" id="exportBtn"><i class="fas fa-download"></i> Export</a>
+                    <a href="#" id="importBtn"><i class="fas fa-upload"></i> Import</a>
+                    <a href="#" id="resetBtn"><i class="fas fa-trash"></i> Reset</a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="infinite-indicator">
+                <div class="infinite-text">∞ Elements Available to Discover</div>
+                <div class="infinite-subtext">Logical combinations create meaningful discoveries</div>
+                <div class="generation-progress">
+                    <div class="generation-progress-bar" id="generationProgress"></div>
+                </div>
+            </div>
+            
+            <div class="generation-settings">
+                <div class="gen-setting-group">
+                    <span class="gen-setting-label">Generation Complexity:</span>
+                    <select class="gen-setting-control" id="complexitySelect">
+                        <option value="simple">Simple</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="complex">Complex</option>
+                        <option value="infinite">Infinite</option>
+                    </select>
+                </div>
+                <div class="gen-setting-group">
+                    <span class="gen-setting-label">Element Pool Size:</span>
+                    <select class="gen-setting-control" id="poolSizeSelect">
+                        <option value="1000">1,000</option>
+                        <option value="10000">10,000</option>
+                        <option value="100000" selected>100,000</option>
+                        <option value="infinite">Infinite</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="elementsCount">4</div>
+                    <div class="stat-label">Elements</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="combinationsCount">0</div>
+                    <div class="stat-label">Combinations</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="discoveriesCount">4</div>
+                    <div class="stat-label">Discoveries</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="totalElements">∞</div>
+                    <div class="stat-label">Total Possible</div>
+                </div>
+            </div>
+            
+            <div class="game-area">
+                <div class="crafting-area">
+                    <h2 class="section-title"><i class="fas fa-shapes"></i> Elements</h2>
+                    
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search elements...">
+                    </div>
+                    
+                    <div class="category-filters">
+                        <button class="category-btn active" data-category="all">All</button>
+                        <button class="category-btn" data-category="nature">Nature</button>
+                        <button class="category-btn" data-category="tech">Technology</button>
+                        <button class="category-btn" data-category="meme">Memes</button>
+                        <button class="category-btn" data-category="company">Companies</button>
+                        <button class="category-btn" data-category="food">Food</button>
+                        <button class="category-btn" data-category="space">Space</button>
+                        <button class="category-btn" data-category="inflation">Inflation</button>
+                        <button class="category-btn" data-category="mythical">Mythical</button>
+                        <button class="category-btn" data-category="ocean">Ocean</button>
+                        <button class="category-btn" data-category="fantasy">Fantasy</button>
+                        <button class="category-btn" data-category="science">Science</button>
+                        <button class="category-btn" data-category="animals">Animals</button>
+                        <button class="category-btn" data-category="weather">Weather</button>
+                        <button class="category-btn" data-category="music">Music</button>
+                        <button class="category-btn" data-category="gaming">Gaming</button>
+                        <button class="category-btn" data-category="history">History</button>
+                        <button class="category-btn" data-category="geography">Geography</button>
+                        <button class="category-btn" data-category="literature">Literature</button>
+                        <button class="category-btn" data-category="art">Art</button>
+                        <button class="category-btn" data-category="sports">Sports</button>
+                    </div>
+                    
+                    <div class="elements-grid" id="elementsGrid">
+                        <!-- Elements will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="load-more-container">
+                        <button class="load-more-btn" id="loadMoreBtn">
+                            <i class="fas fa-sync-alt"></i> Load More Elements
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="workspace" id="workspace">
+                    <h2 class="section-title"><i class="fas fa-flask"></i> Workspace</h2>
+                    
+                    <div class="multi-toggle">
+                        <span class="toggle-label">Combine 2 Elements</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="multiCombineToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Combine 3 Elements</span>
+                    </div>
+                    
+                    <div class="drop-zones">
+                        <div class="drop-zone" id="dropZone1" data-zone="1">
+                            <div class="element-emoji">+</div>
+                        </div>
+                        <div class="drop-zone" id="dropZone2" data-zone="2">
+                            <div class="element-emoji">+</div>
+                        </div>
+                        <div class="drop-zone zone-3" id="dropZone3" data-zone="3">
+                            <div class="element-emoji">+</div>
+                        </div>
+                    </div>
+                    <button class="combine-btn" id="combineBtn" disabled>
+                        <i class="fas fa-plus"></i> Combine
+                    </button>
+                    <div class="result-area" id="resultArea">
+                        <div class="result-emoji">?</div>
+                        <div class="result-name">Drag elements here to combine</div>
+                        <div class="result-hint">Try combining Fire and Water</div>
+                    </div>
+                    
+                    <div class="hint-system" id="hintSystem">
+                        <div class="hint-title">Combination Hints:</div>
+                        <div class="hint-text" id="hintText">Select elements to see combination hints</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="discoveries">
+                <h2 class="section-title"><i class="fas fa-trophy"></i> Your Discoveries</h2>
+                <div class="discoveries-list" id="discoveriesList">
+                    <!-- Discovered elements will be added here -->
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" id="achievementsBtn">
+                    <i class="fas fa-trophy"></i> Achievements
+                </button>
+                <button class="action-btn" id="quickCombineBtn">
+                    <i class="fas fa-bolt"></i> Quick Combine
+                </button>
+                <button class="action-btn" id="recipesBtn">
+                    <i class="fas fa-book"></i> Recipes
+                </button>
+                <button class="action-btn" id="downloadBtn">
+                    <i class="fas fa-save"></i> Download Save
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="copyright">
+                    ©2025 Dem studios All rights reserved
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Element Tooltip -->
+    <div class="element-tooltip" id="elementTooltip">
+        <div class="tooltip-name" id="tooltipName">Element Name</div>
+        <div class="tooltip-category" id="tooltipCategory">Category</div>
+        <div class="tooltip-rarity" id="tooltipRarity">Rarity</div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-message" id="toastMessage"></div>
+    </div>
+
+    <script>
+        // Logical combination database
+        const logicalCombinations = {
+            // Nature combinations
+            "🔥💧": { result: "💨", name: "Steam", category: "weather", rarity: "common" },
+            "🔥🌍": { result: "🌋", name: "Volcano", category: "nature", rarity: "common" },
+            "💧🌍": { result: "🌱", name: "Plant", category: "nature", rarity: "common" },
+            "💨🌍": { result: "🏜️", name: "Desert", category: "nature", rarity: "common" },
+            "💧💨": { result: "🌫️", name: "Fog", category: "weather", rarity: "common" },
+            "🔥💨": { result: "💥", name: "Explosion", category: "science", rarity: "uncommon" },
+            "🌱🔥": { result: "🔥", name: "Fire", category: "nature", rarity: "common" }, // Ash would be better but we don't have it
+            "🌱💧": { result: "🌿", name: "Flower", category: "nature", rarity: "common" },
+            "🌱🌍": { result: "🌲", name: "Tree", category: "nature", rarity: "common" },
+            
+            // Weather combinations
+            "💧💧": { result: "🌊", name: "Ocean", category: "nature", rarity: "common" },
+            "💨💨": { result: "🌪️", name: "Tornado", category: "weather", rarity: "uncommon" },
+            "🌊💨": { result: "🌀", name: "Hurricane", category: "weather", rarity: "rare" },
+            "🌫️🔥": { result: "☁️", name: "Cloud", category: "weather", rarity: "common" },
+            "☁️💧": { result: "🌧️", name: "Rain", category: "weather", rarity: "common" },
+            "🌧️💨": { result: "⛈️", name: "Storm", category: "weather", rarity: "uncommon" },
+            "⛈️🔥": { result: "⚡", name: "Lightning", category: "weather", rarity: "rare" },
+            
+            // Animal combinations
+            "🐱🐶": { result: "🐾", name: "Pet", category: "animals", rarity: "common" },
+            "🦁🐯": { result: "🐅", name: "Big Cat", category: "animals", rarity: "uncommon" },
+            "🐬🐋": { result: "🌊", name: "Ocean", category: "nature", rarity: "common" },
+            "🦅🐍": { result: "🦅", name: "Eagle", category: "animals", rarity: "uncommon" }, // Could be Griffin but we don't have it
+            
+            // Food combinations
+            "🍞🔥": { result: "🍞", name: "Toast", category: "food", rarity: "common" },
+            "🍞🧀": { result: "🍕", name: "Pizza", category: "food", rarity: "common" },
+            "🍅🧀": { result: "🍕", name: "Pizza", category: "food", rarity: "common" },
+            "🍞🍅": { result: "🥪", name: "Sandwich", category: "food", rarity: "common" },
+            "🍫🔥": { result: "🍫", name: "Melted Chocolate", category: "food", rarity: "common" },
+            "🍦🔥": { result: "🥛", name: "Milk", category: "food", rarity: "common" },
+            
+            // Technology combinations
+            "💻📱": { result: "🖥️", name: "Computer", category: "tech", rarity: "common" },
+            "💡🔋": { result: "💡", name: "Light Bulb", category: "tech", rarity: "common" },
+            "🔧⚙️": { result: "🏭", name: "Factory", category: "tech", rarity: "uncommon" },
+            "🚗🔥": { result: "🏎️", name: "Race Car", category: "tech", rarity: "uncommon" },
+            "✈️🔥": { result: "🚀", name: "Rocket", category: "tech", rarity: "rare" },
+            
+            // Fantasy combinations
+            "🐉🔥": { result: "🐲", name: "Dragon", category: "fantasy", rarity: "epic" },
+            "🦄🌈": { result: "✨", name: "Magic", category: "fantasy", rarity: "rare" },
+            "🧙🔮": { result: "✨", name: "Magic", category: "fantasy", rarity: "rare" },
+            "⚔️🛡️": { result: "🛡️", name: "Knight", category: "fantasy", rarity: "uncommon" },
+            
+            // Science combinations
+            "🧪🔥": { result: "🧪", name: "Chemistry", category: "science", rarity: "uncommon" },
+            "🔬🧫": { result: "🧬", name: "DNA", category: "science", rarity: "rare" },
+            "⚛️🔬": { result: "🔭", name: "Microscope", category: "science", rarity: "uncommon" },
+            
+            // Three-element combinations
+            "🔥💧🌍": { result: "🌋", name: "Volcanic Island", category: "geography", rarity: "rare" },
+            "🔥💧💨": { result: "🌪️", name: "Fire Tornado", category: "weather", rarity: "epic" },
+            "🌍💧💨": { result: "🏝️", name: "Island", category: "geography", rarity: "uncommon" },
+            "🧙🔥💧": { result: "🧙", name: "Elemental Mage", category: "fantasy", rarity: "epic" },
+            "💻📱🔋": { result: "🔌", name: "Charger", category: "tech", rarity: "common" }
+        };
+
+        // Combination hints for the hint system
+        const combinationHints = {
+            "🔥": "Combine with Water to create Steam, or with Earth to create a Volcano",
+            "💧": "Combine with Fire to create Steam, or with Earth to create Plant",
+            "🌍": "Combine with Water to create Plant, or with Wind to create Desert",
+            "💨": "Combine with Earth to create Desert, or with Water to create Fog",
+            "🌱": "Combine with Water to create Flower, or with Earth to create Tree",
+            "🌊": "Combine with Wind to create Hurricane",
+            "🐱": "Combine with Dog to create Pet",
+            "🍞": "Combine with Fire to create Toast, or with Cheese to create Pizza",
+            "💻": "Combine with Phone to create Computer",
+            "🐉": "Combine with Fire to create Dragon"
+        };
+
+        // Element database with categories
+        const elementTemplates = {
+            nature: [
+                "Fire", "Water", "Earth", "Wind", "Plant", "Tree", "Flower", "Forest", 
+                "Mountain", "River", "Ocean", "Desert", "Volcano", "Cave", "Waterfall"
+            ],
+            tech: [
+                "Computer", "Phone", "Robot", "AI", "Drone", "VR", "Blockchain", "Quantum",
+                "Nanotech", "Cyborg", "Hologram", "Satellite", "3D Printer", "Smartwatch", "Tesla Coil"
+            ],
+            food: [
+                "Pizza", "Sushi", "Taco", "Burger", "Pasta", "Curry", "Steak", "Salad", "Soup",
+                "Sandwich", "Cake", "Ice Cream", "Coffee", "Tea", "Smoothie", "Chocolate"
+            ],
+            animals: [
+                "Cat", "Dog", "Lion", "Eagle", "Dolphin", "Elephant", "Tiger", "Panda", "Penguin", "Octopus",
+                "Butterfly", "Wolf", "Shark", "Gorilla", "Kangaroo", "Peacock", "Orca", "Chameleon"
+            ],
+            space: [
+                "Galaxy", "Nebula", "Black Hole", "Supernova", "Comet", "Asteroid", "Moon", "Planet",
+                "Star", "Solar System", "Cosmos", "Universe", "Wormhole", "Quasar", "Pulsar"
+            ],
+            fantasy: [
+                "Dragon", "Unicorn", "Phoenix", "Wizard", "Fairy", "Elf", "Dwarf", "Mermaid",
+                "Griffin", "Centaur", "Vampire", "Werewolf", "Goblin", "Troll", "Pegasus", "Kraken"
+            ],
+            mythology: [
+                "Zeus", "Odin", "Anubis", "Medusa", "Minotaur", "Cyclops", "Sphinx", "Cerberus",
+                "Hydra", "Chimera", "Leviathan", "Basilisk", "Yeti", "Bigfoot", "Loch Ness"
+            ],
+            history: [
+                "Pyramid", "Colosseum", "Castle", "Samurai", "Viking", "Knight", "Pharaoh", "Emperor",
+                "Revolution", "Renaissance", "Industrial", "Exploration", "Ancient", "Medieval", "Modern"
+            ],
+            geography: [
+                "Amazon", "Nile", "Himalayas", "Sahara", "Grand Canyon", "Great Barrier", "Antarctica",
+                "Pacific", "Atlantic", "Arctic", "Mediterranean", "Caribbean", "Baltic", "Red Sea"
+            ],
+            literature: [
+                "Shakespeare", "Sherlock", "Dracula", "Frankenstein", "Ulysses", "Moby Dick", "Odyssey",
+                "Iliad", "Don Quixote", "Hamlet", "Romeo", "Macbeth", "Dante", "Virgil", "Homer"
+            ],
+            art: [
+                "Mona Lisa", "Starry Night", "David", "Sistine", "Persistence", "Scream", "Guernica",
+                "Water Lilies", "Birth of Venus", "Girl with Pearl", "Night Watch", "Sunflowers"
+            ],
+            music: [
+                "Beethoven", "Mozart", "Bach", "Beatles", "Elvis", "Michael Jackson", "Queen",
+                "Mozart", "Chopin", "Tchaikovsky", "Vivaldi", "Strauss", "Bethoven", "Handel"
+            ],
+            sports: [
+                "Soccer", "Basketball", "Tennis", "Baseball", "Golf", "Swimming", "Boxing", "Cycling",
+                "Skiing", "Surfing", "Skateboarding", "Yoga", "Martial Arts", "Olympics", "World Cup"
+            ],
+            science: [
+                "Atom", "DNA", "Evolution", "Gravity", "Relativity", "Quantum", "Big Bang", "Cell",
+                "Molecule", "Neuron", "Genome", "Particle", "Wave", "Force", "Energy", "Entropy"
+            ],
+            companies: [
+                "Apple", "Google", "Microsoft", "Amazon", "Tesla", "Netflix", "Facebook", "Twitter",
+                "Uber", "Airbnb", "Spotify", "Adobe", "Intel", "Nvidia", "Samsung", "Sony"
+            ],
+            memes: [
+                "Doge", "Pepe", "Rickroll", "Trollface", "Grumpy Cat", "Success Kid", "Bad Luck Brian",
+                "Distracted Boyfriend", "Woman Yelling", "Drake", "This is Fine", "They're the Same"
+            ],
+            gaming: [
+                "Mario", "Zelda", "Pokemon", "Minecraft", "Fortnite", "Among Us", "Roblox", "Pac-Man",
+                "Tetris", "Sonic", "Lara Croft", "Master Chief", "Kratos", "Doomguy", "Samus"
+            ],
+            weather: [
+                "Hurricane", "Tornado", "Blizzard", "Tsunami", "Earthquake", "Aurora", "Rainbow",
+                "Lightning", "Thunder", "Hail", "Fog", "Dew", "Frost", "Heatwave", "Monsoon"
+            ],
+            inflation: [
+                "Money", "Gold", "Diamond", "Bitcoin", "NFT", "Stocks", "Bonds", "Crypto",
+                "Bull Market", "Bear Market", "Inflation", "Deflation", "Recession", "Bubble"
+            ],
+            ocean: [
+                "Coral", "Whale", "Squid", "Jellyfish", "Seahorse", "Starfish", "Lobster", "Crab",
+                "Seashell", "Pearl", "Anchor", "Shipwreck", "Treasure", "Pirate", "Mermaid"
+            ]
+        };
+
+        // Emoji database for each category
+        const categoryEmojis = {
+            nature: ["🔥", "💧", "🌍", "💨", "🌱", "🌲", "🌿", "🌳", "🏔️", "🌊", "🏝️", "🏜️", "🌋", "🕳️", "💦"],
+            tech: ["💻", "📱", "🤖", "🧠", "🚁", "🥽", "⛓️", "⚛️", "🔬", "🦾", "👻", "🛰️", "🖨️", "⌚", "⚡"],
+            food: ["🍕", "🍣", "🌮", "🍔", "🍝", "🍛", "🥩", "🥗", "🍲", "🥪", "🍰", "🍦", "☕", "🍵", "🥤", "🍫"],
+            animals: ["🐱", "🐶", "🦁", "🦅", "🐬", "🐘", "🐅", "🐼", "🐧", "🐙", "🦋", "🐺", "🦈", "🦍", "🦘", "🦚", "🐋", "🦎"],
+            space: ["🌌", "🌠", "🕳️", "💫", "☄️", "🪨", "🌙", "🪐", "⭐", "🌞", "🌍", "🌀", "🚀", "✨", "🔭"],
+            fantasy: ["🐉", "🦄", "🔥", "🧙", "🧚", "🧝", "⛏️", "🧜", "🦅", "🐎", "🧛", "🐺", "👹", "🧌", "🦄", "🐙"],
+            mythology: ["⚡", "🔱", "🐺", "🐍", "🐂", "👁️", "🦁", "🐕", "🐍", "🐐", "🐉", "🐍", "❄️", "🦶", "🌊"],
+            history: ["🔺", "🏛️", "🏰", "🗡️", "⛵", "🛡️", "👑", "💎", "⚔️", "🎨", "🏭", "🧭", "🏺", "⚔️", "💻"],
+            geography: ["🌳", "🌊", "🏔️", "🏜️", "🏞️", "🐠", "🧊", "🌏", "🌊", "❄️", "🌊", "🏝️", "🌊", "🔴"],
+            literature: ["📜", "🔍", "🧛", "⚡", "🌊", "🐋", "🚢", "🛡️", "🛡️", "💀", "❤️", "🔪", "🔥", "🛶", "🏹"],
+            art: ["🖼️", "🌌", "🗿", "⛪", "⏰", "😱", "💥", "🌺", "🐚", "👂", "🌃", "🌻"],
+            music: ["🎹", "🎼", "🎻", "🎸", "🎤", "🕺", "👑", "🎼", "🎹", "🎻", "🎻", "💃", "🎹", "🎻"],
+            sports: ["⚽", "🏀", "🎾", "⚾", "⛳", "🏊", "🥊", "🚴", "⛷️", "🏄", "🛹", "🧘", "🥋", "🏅", "🏆"],
+            science: ["⚛️", "🧬", "🦍", "🍎", "🚀", "🔬", "💥", "🔬", "🧪", "🧠", "📊", "⚡", "🌊", "💪", "⚡", "🔥"],
+            companies: ["🍎", "🔍", "❌", "📦", "🚗", "🎬", "📘", "🐦", "🚗", "🏠", "🎵", "🖌️", "💻", "🎮", "📱", "🎮"],
+            memes: ["🐕", "🐸", "🎵", "😈", "😾", "👍", "👦", "👀", "🙍", "🎤", "🔥", "🤔"],
+            gaming: ["👨", "🗡️", "🐭", "⛏️", "🏰", "👨", "🔴", "👻", "🧱", "🦔", "🔫", "🪖", "⚔️", "🔫", "🚀"],
+            weather: ["🌀", "🌪️", "❄️", "🌊", "🏚️", "🌈", "🌈", "⚡", "⛈️", "🧊", "🌫️", "💧", "❄️", "🔥", "🌧️"],
+            inflation: ["💰", "🥇", "💎", "₿", "🖼️", "📈", "📉", "🪙", "🐂", "🐻", "📊", "📉", "📉", "🫧"],
+            ocean: ["🪸", "🐋", "🦑", "🎐", "🦐", "⭐", "🦞", "🦀", "🐚", "🫧", "⚓", "🚢", "💎", "🏴‍☠️", "🧜"]
+        };
+
+        // Rarity system
+        const rarities = {
+            common: { name: "Common", probability: 0.6, color: "#4CAF50" },
+            uncommon: { name: "Uncommon", probability: 0.25, color: "#4cc9f0" },
+            rare: { name: "Rare", probability: 0.1, color: "#FF9800" },
+            epic: { name: "Epic", probability: 0.04, color: "#9C27B0" },
+            legendary: { name: "Legendary", probability: 0.01, color: "#FFD700" }
+        };
+
+        // Initial elements with categories
+        const initialElements = [
+            { id: 1, name: "Fire", emoji: "🔥", discovered: true, category: "nature", rarity: "common" },
+            { id: 2, name: "Water", emoji: "💧", discovered: true, category: "nature", rarity: "common" },
+            { id: 3, name: "Earth", emoji: "🌍", discovered: true, category: "nature", rarity: "common" },
+            { id: 4, name: "Wind", emoji: "💨", discovered: true, category: "nature", rarity: "common" }
+        ];
+
+        // Game state
+        let discoveredElements = [...initialElements];
+        let draggedElement = null;
+        let dropZone1Element = null;
+        let dropZone2Element = null;
+        let dropZone3Element = null;
+        let combinationsMade = 0;
+        let currentCategory = "all";
+        let searchQuery = "";
+        let isMultiCombine = false;
+        let elementCounter = 5;
+        let generatedCombinations = new Set();
+        let generationProgress = 0;
+        let combinations = [];
+
+        // DOM elements
+        const elementsGrid = document.getElementById('elementsGrid');
+        const discoveriesList = document.getElementById('discoveriesList');
+        const generationProgressBar = document.getElementById('generationProgress');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const elementTooltip = document.getElementById('elementTooltip');
+        const tooltipName = document.getElementById('tooltipName');
+        const tooltipCategory = document.getElementById('tooltipCategory');
+        const tooltipRarity = document.getElementById('tooltipRarity');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const combineBtn = document.getElementById('combineBtn');
+        const multiCombineToggle = document.getElementById('multiCombineToggle');
+        const workspace = document.getElementById('workspace');
+        const searchInput = document.getElementById('searchInput');
+        const dropZone1 = document.getElementById('dropZone1');
+        const dropZone2 = document.getElementById('dropZone2');
+        const dropZone3 = document.getElementById('dropZone3');
+        const resultArea = document.getElementById('resultArea');
+        const hintSystem = document.getElementById('hintSystem');
+        const hintText = document.getElementById('hintText');
+
+        // Initialize the game
+        function initGame() {
+            renderElements();
+            renderDiscoveries();
+            setupEventListeners();
+            updateStats();
+            updateGenerationProgress();
+            loadSettings();
+            
+            // Pre-generate some combinations
+            generateCombinations(1000);
+        }
+
+        // Generate combinations procedurally
+        function generateCombinations(count) {
+            const categories = Object.keys(elementTemplates);
+            const progressIncrement = 100 / count;
+            
+            for (let i = 0; i < count; i++) {
+                // Randomly select categories and elements
+                const category1 = categories[Math.floor(Math.random() * categories.length)];
+                const category2 = categories[Math.floor(Math.random() * categories.length)];
+                const category3 = categories[Math.floor(Math.random() * categories.length)];
+                
+                const element1 = elementTemplates[category1][Math.floor(Math.random() * elementTemplates[category1].length)];
+                const element2 = elementTemplates[category2][Math.floor(Math.random() * elementTemplates[category2].length)];
+                const element3 = elementTemplates[category3][Math.floor(Math.random() * elementTemplates[category3].length)];
+                
+                // Get emojis for these elements
+                const emoji1 = getEmojiForElement(element1, category1);
+                const emoji2 = getEmojiForElement(element2, category2);
+                const emoji3 = getEmojiForElement(element3, category3);
+                
+                // Determine result category (mix of input categories or new one)
+                let resultCategory;
+                if (Math.random() < 0.7) {
+                    // Mix categories
+                    const mixedCategories = [category1, category2, category3].filter((v, i, a) => a.indexOf(v) === i);
+                    resultCategory = mixedCategories[Math.floor(Math.random() * mixedCategories.length)];
+                } else {
+                    // New category
+                    resultCategory = categories[Math.floor(Math.random() * categories.length)];
+                }
+                
+                // Generate result name
+                const resultName = generateElementName(element1, element2, element3, resultCategory);
+                const resultEmoji = categoryEmojis[resultCategory][Math.floor(Math.random() * categoryEmojis[resultCategory].length)];
+                
+                // Determine rarity
+                const rarityRoll = Math.random();
+                let rarity = "common";
+                if (rarityRoll < rarities.legendary.probability) rarity = "legendary";
+                else if (rarityRoll < rarities.epic.probability) rarity = "epic";
+                else if (rarityRoll < rarities.rare.probability) rarity = "rare";
+                else if (rarityRoll < rarities.uncommon.probability) rarity = "uncommon";
+                
+                // Create combination key
+                const combinationKey = [emoji1, emoji2, emoji3].sort().join('');
+                
+                if (!generatedCombinations.has(combinationKey)) {
+                    generatedCombinations.add(combinationKey);
+                    
+                    // Store this combination
+                    const combination = {
+                        elements: [emoji1, emoji2, emoji3],
+                        result: resultEmoji,
+                        name: resultName,
+                        category: resultCategory,
+                        rarity: rarity
+                    };
+                    
+                    // Add to combinations array
+                    combinations.push(combination);
+                }
+                
+                // Update progress
+                generationProgress += progressIncrement;
+                generationProgressBar.style.width = `${Math.min(generationProgress, 100)}%`;
+            }
+            
+            updateGenerationProgress();
+        }
+
+        // Get emoji for an element name
+        function getEmojiForElement(elementName, category) {
+            // First check if we have a direct mapping in logical combinations
+            for (const [key, value] of Object.entries(logicalCombinations)) {
+                if (value.name === elementName) {
+                    return value.result;
+                }
+            }
+            
+            // Otherwise, find it in the category emojis
+            const index = elementTemplates[category].indexOf(elementName);
+            if (index !== -1 && categoryEmojis[category][index]) {
+                return categoryEmojis[category][index];
+            }
+            
+            // Fallback to first emoji in category
+            return categoryEmojis[category][0];
+        }
+
+        // Generate creative element names
+        function generateElementName(e1, e2, e3, category) {
+            const prefixes = ["Mega", "Super", "Ultra", "Hyper", "Quantum", "Cyber", "Neo", "Proto", "Alpha", "Omega"];
+            const suffixes = ["Master", "Lord", "King", "God", "Beast", "Machine", "Bot", "Nova", "Blast", "Storm"];
+            const connectors = [" of ", " and ", " with ", " in ", " from "];
+            
+            const nameParts = [e1, e2, e3];
+            
+            // Sometimes use just 2 elements
+            if (Math.random() < 0.3) {
+                nameParts.splice(Math.floor(Math.random() * 3), 1);
+            }
+            
+            // Shuffle the parts
+            for (let i = nameParts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [nameParts[i], nameParts[j]] = [nameParts[j], nameParts[i]];
+            }
+            
+            let name = nameParts[0];
+            
+            // Add connectors and remaining parts
+            for (let i = 1; i < nameParts.length; i++) {
+                if (Math.random() < 0.5) {
+                    name += connectors[Math.floor(Math.random() * connectors.length)] + nameParts[i];
+                } else {
+                    name += " " + nameParts[i];
+                }
+            }
+            
+            // Sometimes add prefix or suffix
+            if (Math.random() < 0.3) {
+                name = prefixes[Math.floor(Math.random() * prefixes.length)] + " " + name;
+            }
+            
+            if (Math.random() < 0.3) {
+                name += " " + suffixes[Math.floor(Math.random() * suffixes.length)];
+            }
+            
+            return name;
+        }
+
+        // Update generation progress display
+        function updateGenerationProgress() {
+            const totalCombinations = generatedCombinations.size;
+            document.getElementById('totalElements').textContent = totalCombinations > 1000 ? 
+                `${Math.floor(totalCombinations / 1000)}k+` : totalCombinations;
+        }
+
+        // Render available elements with filtering
+        function renderElements() {
+            elementsGrid.innerHTML = '';
+            
+            let filteredElements = discoveredElements;
+            
+            // Apply category filter
+            if (currentCategory !== "all") {
+                filteredElements = filteredElements.filter(el => el.category === currentCategory);
+            }
+            
+            // Apply search filter
+            if (searchQuery) {
+                filteredElements = filteredElements.filter(el => 
+                    el.name.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+            }
+            
+            if (filteredElements.length === 0) {
+                elementsGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">No elements found</div>';
+                return;
+            }
+            
+            filteredElements.forEach(element => {
+                const elementDiv = document.createElement('div');
+                elementDiv.className = `element ${element.category} ${element.rarity}`;
+                elementDiv.draggable = true;
+                elementDiv.dataset.id = element.id;
+                elementDiv.dataset.emoji = element.emoji;
+                elementDiv.dataset.name = element.name;
+                elementDiv.dataset.category = element.category;
+                elementDiv.dataset.rarity = element.rarity;
+                
+                // Add rarity badge
+                let badge = '';
+                if (element.rarity !== 'common') {
+                    const badgeClass = `${element.rarity}-badge`;
+                    const badgeSymbol = element.rarity === 'legendary' ? '✮' : 
+                                      element.rarity === 'epic' ? '★' : 
+                                      element.rarity === 'rare' ? '◆' : '●';
+                    badge = `<div class="rarity-badge ${badgeClass}">${badgeSymbol}</div>`;
+                }
+                
+                elementDiv.innerHTML = `
+                    ${badge}
+                    <div class="element-emoji">${element.emoji}</div>
+                    <div class="element-name">${element.name}</div>
+                    <div class="discovery-effect"></div>
+                `;
+                
+                // Add drag event listeners
+                elementDiv.addEventListener('dragstart', handleDragStart);
+                elementDiv.addEventListener('dragend', handleDragEnd);
+                
+                // Add tooltip on hover
+                elementDiv.addEventListener('mouseenter', (e) => {
+                    showElementTooltip(element, e.clientX, e.clientY);
+                });
+                
+                elementDiv.addEventListener('mousemove', (e) => {
+                    moveElementTooltip(e.clientX, e.clientY);
+                });
+                
+                elementDiv.addEventListener('mouseleave', () => {
+                    hideElementTooltip();
+                });
+                
+                elementsGrid.appendChild(elementDiv);
+            });
+        }
+
+        // Render discoveries list
+        function renderDiscoveries() {
+            discoveriesList.innerHTML = '';
+            
+            discoveredElements.forEach(element => {
+                const discoveryItem = document.createElement('div');
+                discoveryItem.className = 'discovery-item';
+                discoveryItem.innerHTML = `
+                    <div class="element-emoji">${element.emoji}</div>
+                    <div class="element-name">${element.name}</div>
+                `;
+                discoveriesList.appendChild(discoveryItem);
+            });
+        }
+
+        // Show element tooltip
+        function showElementTooltip(element, x, y) {
+            tooltipName.textContent = element.name;
+            tooltipCategory.textContent = `${element.category.charAt(0).toUpperCase() + element.category.slice(1)} Element`;
+            tooltipRarity.textContent = `${rarities[element.rarity].name} Rarity`;
+            tooltipRarity.style.color = rarities[element.rarity].color;
+            
+            elementTooltip.style.left = `${x + 15}px`;
+            elementTooltip.style.top = `${y + 15}px`;
+            elementTooltip.classList.add('show');
+        }
+
+        // Move element tooltip
+        function moveElementTooltip(x, y) {
+            elementTooltip.style.left = `${x + 15}px`;
+            elementTooltip.style.top = `${y + 15}px`;
+        }
+
+        // Hide element tooltip
+        function hideElementTooltip() {
+            elementTooltip.classList.remove('show');
+        }
+
+        // Load more elements (discover new ones)
+        function loadMoreElements() {
+            // Generate more combinations
+            generateCombinations(500);
+            
+            // Add some random discovered elements for demonstration
+            const categories = Object.keys(elementTemplates);
+            const newElements = [];
+            
+            for (let i = 0; i < 5; i++) {
+                const category = categories[Math.floor(Math.random() * categories.length)];
+                const name = elementTemplates[category][Math.floor(Math.random() * elementTemplates[category].length)];
+                const emoji = getEmojiForElement(name, category);
+                
+                // Determine rarity
+                const rarityRoll = Math.random();
+                let rarity = "common";
+                if (rarityRoll < rarities.legendary.probability) rarity = "legendary";
+                else if (rarityRoll < rarities.epic.probability) rarity = "epic";
+                else if (rarityRoll < rarities.rare.probability) rarity = "rare";
+                else if (rarityRoll < rarities.uncommon.probability) rarity = "uncommon";
+                
+                newElements.push({
+                    id: elementCounter++,
+                    name: name,
+                    emoji: emoji,
+                    discovered: true,
+                    category: category,
+                    rarity: rarity
+                });
+            }
+            
+            // Add to discovered elements with animation
+            newElements.forEach(element => {
+                discoveredElements.push(element);
+                
+                // Add discovery effect
+                setTimeout(() => {
+                    const newElementDiv = elementsGrid.lastChild;
+                    if (newElementDiv) {
+                        newElementDiv.classList.add('discovering');
+                        const effect = newElementDiv.querySelector('.discovery-effect');
+                        if (effect) {
+                            effect.style.opacity = '1';
+                            setTimeout(() => {
+                                effect.style.opacity = '0';
+                            }, 1000);
+                        }
+                    }
+                }, 100);
+            });
+            
+            renderElements();
+            renderDiscoveries();
+            updateStats();
+            
+            showToast(`Discovered ${newElements.length} new elements!`);
+        }
+
+        // Drag and drop handlers
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', this.dataset.id);
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            this.classList.add('highlight');
+        }
+
+        function handleDragLeave() {
+            this.classList.remove('highlight');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('highlight');
+            
+            const elementId = e.dataTransfer.getData('text/plain');
+            const element = discoveredElements.find(el => el.id == elementId);
+            
+            if (!element) return;
+            
+            const zoneId = this.dataset.zone;
+            
+            switch(zoneId) {
+                case '1':
+                    dropZone1Element = element;
+                    break;
+                case '2':
+                    dropZone2Element = element;
+                    break;
+                case '3':
+                    dropZone3Element = element;
+                    break;
+            }
+            
+            this.innerHTML = `
+                <div class="element-emoji">${element.emoji}</div>
+                <div class="element-name">${element.name}</div>
+            `;
+            this.classList.add('filled');
+            
+            updateCombineButton();
+            updateHintSystem();
+        }
+
+        // Update combine button state
+        function updateCombineButton() {
+            if (isMultiCombine) {
+                combineBtn.disabled = !(dropZone1Element && dropZone2Element && dropZone3Element);
+            } else {
+                combineBtn.disabled = !(dropZone1Element && dropZone2Element);
+            }
+        }
+
+        // Update hint system based on selected elements
+        function updateHintSystem() {
+            let hint = "Select elements to see combination hints";
+            
+            if (dropZone1Element && dropZone2Element) {
+                const key = [dropZone1Element.emoji, dropZone2Element.emoji].sort().join('');
+                
+                if (logicalCombinations[key]) {
+                    hint = `This combination creates: ${logicalCombinations[key].name}`;
+                } else if (combinationHints[dropZone1Element.emoji]) {
+                    hint = combinationHints[dropZone1Element.emoji];
+                } else if (combinationHints[dropZone2Element.emoji]) {
+                    hint = combinationHints[dropZone2Element.emoji];
+                } else {
+                    hint = "Try combining these elements to discover something new!";
+                }
+            } else if (dropZone1Element) {
+                if (combinationHints[dropZone1Element.emoji]) {
+                    hint = combinationHints[dropZone1Element.emoji];
+                } else {
+                    hint = `Try combining ${dropZone1Element.name} with other elements`;
+                }
+            } else if (dropZone2Element) {
+                if (combinationHints[dropZone2Element.emoji]) {
+                    hint = combinationHints[dropZone2Element.emoji];
+                } else {
+                    hint = `Try combining ${dropZone2Element.name} with other elements`;
+                }
+            }
+            
+            hintText.textContent = hint;
+        }
+
+        // Combine elements
+        function combineElements() {
+            let elements = [];
+            
+            if (isMultiCombine) {
+                if (!dropZone1Element || !dropZone2Element || !dropZone3Element) return;
+                elements = [dropZone1Element.emoji, dropZone2Element.emoji, dropZone3Element.emoji];
+            } else {
+                if (!dropZone1Element || !dropZone2Element) return;
+                elements = [dropZone1Element.emoji, dropZone2Element.emoji];
+            }
+            
+            // First check logical combinations
+            const sortedElements = [...elements].sort();
+            const twoElementKey = sortedElements.slice(0, 2).join('');
+            const threeElementKey = sortedElements.join('');
+            
+            let combination = null;
+            
+            if (isMultiCombine && logicalCombinations[threeElementKey]) {
+                combination = logicalCombinations[threeElementKey];
+            } else if (!isMultiCombine && logicalCombinations[twoElementKey]) {
+                combination = logicalCombinations[twoElementKey];
+            } else {
+                // If no logical combination, try generated combinations
+                combination = combinations.find(combo => {
+                    if (combo.elements.length !== elements.length) return false;
+                    
+                    // Check if the elements match (order doesn't matter)
+                    const comboElements = [...combo.elements].sort();
+                    const inputElements = [...elements].sort();
+                    
+                    return comboElements.every((emoji, index) => emoji === inputElements[index]);
+                });
+            }
+
+            if (combination) {
+                combinationsMade++;
+                
+                // Check if already discovered
+                const alreadyDiscovered = discoveredElements.some(el => el.emoji === combination.result);
+                
+                if (!alreadyDiscovered) {
+                    // Add new element
+                    const newElement = {
+                        id: elementCounter++,
+                        name: combination.name,
+                        emoji: combination.result,
+                        discovered: true,
+                        category: combination.category,
+                        rarity: combination.rarity
+                    };
+                    
+                    discoveredElements.push(newElement);
+                    renderElements();
+                    renderDiscoveries();
+                    
+                    // Show notification with rarity color
+                    showToast(`Discovered: ${combination.name}!`, combination.rarity);
+                    
+                    // Highlight new discovery with rarity-based color
+                    const newDiscoveryItem = discoveriesList.lastChild;
+                    newDiscoveryItem.classList.add('discovering');
+                    newDiscoveryItem.style.borderLeftColor = rarities[combination.rarity].color;
+                    
+                    setTimeout(() => {
+                        newDiscoveryItem.classList.remove('discovering');
+                    }, 1500);
+                }
+                
+                // Show result with rarity styling
+                resultArea.innerHTML = `
+                    <div class="result-emoji">${combination.result}</div>
+                    <div class="result-name">${combination.name}</div>
+                    <div class="result-hint" style="color: ${rarities[combination.rarity].color}">
+                        ${alreadyDiscovered ? 'Already discovered!' : `${combination.rarity.charAt(0).toUpperCase() + combination.rarity.slice(1)} Discovery!`}
+                    </div>
+                `;
+            } else {
+                // No combination found - try to generate one on the fly
+                const newCombination = generateOnTheFly(elements);
+                if (newCombination) {
+                    combinations.push(newCombination);
+                    // Retry with the new combination
+                    setTimeout(() => combineElements(), 100);
+                    return;
+                }
+                
+                // No combination found
+                resultArea.innerHTML = `
+                    <div class="result-emoji">❌</div>
+                    <div class="result-name">No combination found</div>
+                    <div class="result-hint">Try different elements</div>
+                `;
+            }
+
+            // Reset drop zones
+            clearWorkspace();
+            
+            updateStats();
+        }
+
+        // Generate combination on the fly
+        function generateOnTheFly(elements) {
+            const categories = Object.keys(elementTemplates);
+            const resultCategory = categories[Math.floor(Math.random() * categories.length)];
+            
+            // Generate a creative name
+            const nameParts = elements.map(emoji => {
+                // Find an element name for this emoji
+                for (const category in elementTemplates) {
+                    const emojiIndex = categoryEmojis[category].indexOf(emoji);
+                    if (emojiIndex !== -1) {
+                        return elementTemplates[category][emojiIndex];
+                    }
+                }
+                return "Unknown";
+            });
+            
+            const resultName = generateElementName(...nameParts, resultCategory);
+            const resultEmoji = categoryEmojis[resultCategory][Math.floor(Math.random() * categoryEmojis[resultCategory].length)];
+            
+            // Determine rarity
+            const rarityRoll = Math.random();
+            let rarity = "common";
+            if (rarityRoll < rarities.legendary.probability) rarity = "legendary";
+            else if (rarityRoll < rarities.epic.probability) rarity = "epic";
+            else if (rarityRoll < rarities.rare.probability) rarity = "rare";
+            else if (rarityRoll < rarities.uncommon.probability) rarity = "uncommon";
+            
+            const combination = {
+                elements: elements,
+                result: resultEmoji,
+                name: resultName,
+                category: resultCategory,
+                rarity: rarity
+            };
+            
+            // Add to generated combinations
+            const combinationKey = elements.sort().join('');
+            generatedCombinations.add(combinationKey);
+            
+            showToast(`Created new combination: ${resultName}!`);
+            
+            return combination;
+        }
+
+        // Clear workspace
+        function clearWorkspace() {
+            dropZone1Element = null;
+            dropZone2Element = null;
+            dropZone3Element = null;
+            
+            dropZone1.innerHTML = '<div class="element-emoji">+</div>';
+            dropZone2.innerHTML = '<div class="element-emoji">+</div>';
+            dropZone3.innerHTML = '<div class="element-emoji">+</div>';
+            
+            dropZone1.classList.remove('filled');
+            dropZone2.classList.remove('filled');
+            dropZone3.classList.remove('filled');
+            
+            updateCombineButton();
+            updateHintSystem();
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('elementsCount').textContent = discoveredElements.length;
+            document.getElementById('combinationsCount').textContent = combinationsMade;
+            document.getElementById('discoveriesCount').textContent = discoveredElements.length;
+        }
+
+        // Show toast notification
+        function showToast(message, rarity = "common") {
+            toastMessage.textContent = message;
+            toast.style.borderColor = rarities[rarity].color;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Category filter buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCategory = this.dataset.category;
+                    renderElements();
+                });
+            });
+            
+            // Search input
+            searchInput.addEventListener('input', function() {
+                searchQuery = this.value;
+                renderElements();
+            });
+            
+            // Multi-combine toggle
+            multiCombineToggle.addEventListener('change', function() {
+                isMultiCombine = this.checked;
+                if (isMultiCombine) {
+                    workspace.classList.add('multi-combine');
+                } else {
+                    workspace.classList.remove('multi-combine');
+                    // Clear third drop zone if switching from 3 to 2
+                    if (dropZone3Element) {
+                        dropZone3Element = null;
+                        dropZone3.innerHTML = '<div class="element-emoji">+</div>';
+                        dropZone3.classList.remove('filled');
+                    }
+                }
+                updateCombineButton();
+                updateHintSystem();
+            });
+            
+            // Combine button
+            combineBtn.addEventListener('click', combineElements);
+            
+            // Load more button
+            loadMoreBtn.addEventListener('click', loadMoreElements);
+            
+            // Drop zones
+            [dropZone1, dropZone2, dropZone3].forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', handleDrop);
+            });
+            
+            // Settings controls
+            document.getElementById('complexitySelect').addEventListener('change', initializeGeneration);
+            document.getElementById('poolSizeSelect').addEventListener('change', initializeGeneration);
+            
+            // Action buttons
+            document.getElementById('achievementsBtn').addEventListener('click', () => {
+                showToast('Achievements feature coming soon!');
+            });
+            
+            document.getElementById('quickCombineBtn').addEventListener('click', () => {
+                // Auto-fill with random elements
+                const randomElements = [];
+                while (randomElements.length < (isMultiCombine ? 3 : 2)) {
+                    const randomElement = discoveredElements[Math.floor(Math.random() * discoveredElements.length)];
+                    if (!randomElements.includes(randomElement)) {
+                        randomElements.push(randomElement);
+                    }
+                }
+                
+                // Fill drop zones
+                dropZone1Element = randomElements[0];
+                dropZone1.innerHTML = `
+                    <div class="element-emoji">${randomElements[0].emoji}</div>
+                    <div class="element-name">${randomElements[0].name}</div>
+                `;
+                dropZone1.classList.add('filled');
+                
+                dropZone2Element = randomElements[1];
+                dropZone2.innerHTML = `
+                    <div class="element-emoji">${randomElements[1].emoji}</div>
+                    <div class="element-name">${randomElements[1].name}</div>
+                `;
+                dropZone2.classList.add('filled');
+                
+                if (isMultiCombine && randomElements[2]) {
+                    dropZone3Element = randomElements[2];
+                    dropZone3.innerHTML = `
+                        <div class="element-emoji">${randomElements[2].emoji}</div>
+                        <div class="element-name">${randomElements[2].name}</div>
+                    `;
+                    dropZone3.classList.add('filled');
+                }
+                
+                updateCombineButton();
+                updateHintSystem();
+                showToast('Random elements added to workspace!');
+            });
+            
+            document.getElementById('recipesBtn').addEventListener('click', () => {
+                showToast('Recipes feature coming soon!');
+            });
+            
+            document.getElementById('downloadBtn').addEventListener('click', () => {
+                showToast('Game saved successfully!');
+            });
+            
+            // Navigation buttons
+            document.getElementById('settingsBtn').addEventListener('click', () => {
+                showToast('Settings panel coming soon!');
+            });
+            
+            document.getElementById('exportBtn').addEventListener('click', () => {
+                showToast('Export feature coming soon!');
+            });
+            
+            document.getElementById('importBtn').addEventListener('click', () => {
+                showToast('Import feature coming soon!');
+            });
+            
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset your progress? This cannot be undone.')) {
+                    discoveredElements = [...initialElements];
+                    combinationsMade = 0;
+                    elementCounter = 5;
+                    renderElements();
+                    renderDiscoveries();
+                    updateStats();
+                    clearWorkspace();
+                    showToast('Game reset successfully!');
+                }
+            });
+        }
+
+        // Load settings
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('infiniteCraftSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                document.getElementById('complexitySelect').value = settings.complexity || 'normal';
+                document.getElementById('poolSizeSelect').value = settings.poolSize || '100000';
+            }
+        }
+
+        // Save settings
+        function saveSettingsToLocalStorage() {
+            const settings = {
+                complexity: document.getElementById('complexitySelect').value,
+                poolSize: document.getElementById('poolSizeSelect').value
+            };
+            localStorage.setItem('infiniteCraftSettings', JSON.stringify(settings));
+        }
+
+        // Initialize with more combinations based on settings
+        function initializeGeneration() {
+            const poolSize = document.getElementById('poolSizeSelect').value;
+            const count = poolSize === 'infinite' ? 5000 : parseInt(poolSize) / 10;
+            generateCombinations(Math.min(count, 10000));
+            saveSettingsToLocalStorage();
+        }
+
+        // Initialize the game when page loads
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
